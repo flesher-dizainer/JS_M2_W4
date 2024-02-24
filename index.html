@@ -75,6 +75,78 @@
 С помощью написанного класса реализовать следующий блок
 и добавить его на страницу с помощью document.write()
 */
+    class HtmlElement {
+        constructor(nameTag,closingElement,textData){
+            this.nameTag = nameTag;
+            this.closingElement = closingElement;
+            this.textData = textData;
+            this.objAttributes = {};//Атрибуты сделаем как объект, содержащий ключи и значения
+            this.objStyles = {};//Стили сделаем как объект, содержащий ключи и значения
+            this.arrElement = [];//массив вложенных элементов
+        }
+        //добавляем/заменяем атрибуты
+        setAttribute(objectAttribute){
+            for (let i in objectAttribute){
+                this.objAttributes[i] = objectAttribute[i];
+            }
+        }
+        //метод добавления стилей
+        setStyle(objectStyle){
+            for (let i in objectStyle){
+                this.objStyles[i] = objectStyle[i];
+            }    
+        }
+        //метод добавления вложенного элемента в конец массива(по сути обьекта, класса)
+        addElementEnd(classElement){
+            this.arrElement[this.arrElement.length] = classElement;
+        }
+        //добавление вложенного элемента в начало массива
+        addElementStart(classElement){
+            for ( let i = this.arrElement.length; i > 0; i--){
+                this.arrElement[i] = this.arrElement[i-1];
+            }
+            this.arrElement[0] = classElement;
+        }
+        //метод возвращения html в виде строки
+        getHtml(){
+            let exHtml = '<'+this.nameTag;
+            
+            //здесь будет добавление стилей
+            exHtml +=' style = "';
+            for (let i in this.objStyles){
+                exHtml +=' '+i+':'+this.objStyles[i]+';';
+            }
+            exHtml +='"';
+            //здесь будет добавление атрибутов
+            for (let i in this.objAttributes){
+                exHtml +=' '+i+'="'+this.objAttributes[i]+'"';
+            }
+            //
+            exHtml += '>';
+            //добавляем текст
+            exHtml +=this.textData;
+            
+            //здесь будет добавление вложенных элементов(классов)
+            for ( let i = 0; i < this.arrElement.length; i++){
+                exHtml += this.arrElement[i].getHtml();
+            }
+            if (this.closingElement == true){
+                exHtml += '</'+this.nameTag+'>';
+            }
+            return exHtml;
+        }
+    }
+    let myHtml = new HtmlElement('div',true,'');    
+    let secondHtml = new HtmlElement('a',true,'Ссылка куда-нибудь');
+    let attributs = { href : 'https://www.lipsum.com', target : '_blank' }
+    let styles = {color:'green'}
+    secondHtml.setStyle(styles);
+    secondHtml.setAttribute(attributs);
+    myHtml.addElementStart(secondHtml);
+    secondHtml = new HtmlElement('br',false,'');
+    myHtml.addElementEnd(secondHtml); 
+    document.write(myHtml.getHtml());
+    //console.log(myHtml);
     </script>
     
 </body>
